@@ -1,16 +1,19 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const cors = require('cors');
+const corsOptions = require('./middlewares/cors');
 
 const incomeRoutes = require('./routers/incomeRouters');
 const expenseRoutes = require('./routers/expenseRouters');
 const grossIncomeRoutes = require('./routers/grossIncomeRouters');
 const lossRoutes = require('./routers/lossRouters');
 
+
 /* Middlewares */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
-
+app.use(cors(corsOptions));
 /* Logger Middleware */
 app.use((req, res, next) => {
    console.log('New request made');

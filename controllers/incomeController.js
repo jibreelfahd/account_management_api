@@ -7,28 +7,30 @@ const user_income = (req, res) => {
 
 /* Adding the users income */
 const add_user_income = (req, res) => {
-   const addIncome = req.body;
-   userIncome.forEach((add, index) => {
-      userIncome.push(`Income ${index}: N${addIncome}`);
-   });
-   res.status(201).res.json(userIncome);
+   const addIncome = req.body.income;
+   userIncome.push(`Income: N${addIncome}`);
+   res.status(201).json({ success: true, data: userIncome});
 }
 
 /* Updating the user income */
 const update_income = (req, res) => {
    const incomeId = req.params.id;
    const updateIncome = req.body;
+
+   if (!incomeId) {
+      res.status(400).json( {message: 'No income with this id' });
+   }
    userIncome[incomeId] = updateIncome;
-   res.status(200).res.json(userIncome); 
+   res.status(200).json(userIncome); 
 }
 
 /* Summing all income */
 const add_all_income = (req, res) => {
-   const amount = userIncome.splice(0, 10);
+   const amount = userIncome.slice(0, 10);
    const allSum = amount.reduce((acc, prevValue) => {
       acc + prevValue, 0
    });
-   res.status(200).res.json(`Total Sum is: N${allSum}`);
+   res.status(200).res.json({ message: `Total Sum is: N${allSum}` });
 }
 
 module.exports = { 
