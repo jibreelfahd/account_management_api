@@ -8,6 +8,7 @@ const incomeRoutes = require('./routers/incomeRouters');
 const expenseRoutes = require('./routers/expenseRouters');
 const grossIncomeRoutes = require('./routers/grossIncomeRouters');
 const lossRoutes = require('./routers/lossRouters');
+const undoRedoRouter = require('./routers/undoRedoRouter');
 
 
 /* Middlewares */
@@ -36,6 +37,8 @@ app.use(grossIncomeRoutes);
 /* Loss Routes */
 app.use(lossRoutes);
 
+/* Undo/Redo Routes */
+app.use(undoRedoRouter);
 /* Server Listening For Requests */
 app.listen(6000, () => {
    console.log('Listening for requests');
