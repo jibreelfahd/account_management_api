@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
-const corsOptions = require('./middlewares/cors');
+require('dotenv').config();
 
+
+const sequelize = require('./db/index');
+const corsOptions = require('./middlewares/cors');
 const incomeRoutes = require('./routers/incomeRouters');
 const expenseRoutes = require('./routers/expenseRouters');
 const grossIncomeRoutes = require('./routers/grossIncomeRouters');
@@ -11,11 +14,12 @@ const lossRoutes = require('./routers/lossRouters');
 const undoRedoRouter = require('./routers/undoRedoRouter');
 
 
-/* Middlewares */
+// @desc MIDDLEWARED 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(cors(corsOptions));
-/* Logger Middleware */
+
+// @desc lOGGER MIDDLEWARES */
 app.use((req, res, next) => {
    console.log('New request made');
    console.log(`Host: ${req.hostname}`);
@@ -25,21 +29,36 @@ app.use((req, res, next) => {
    next()
 });
 
-/* UserIncome Routes */
-app.use(incomeRoutes);
 
-/* Expense Routes */
-app.use(expenseRoutes);
+// @desc connecting to the database
+const connectDB = async () => {
+   try {
+      await sequelize.authenticate();
+      console.log('Connected to DB');
+   } catch (error) {
+      console.log('Couldnt connect to DB');
+   }
+} 
 
-/* Gross Income Routes */
+connectDB()
+
+// @ UserIncome Routes 
+app.use('/income', incomeRoutes);
+
+// @desc Expense Routes 
+app.use('/expense', expenseRoutes);
+
+// @desc Gross Income Routes
 app.use(grossIncomeRoutes);
 
-/* Loss Routes */
+// @desc Loss Routes
 app.use(lossRoutes);
 
-/* Undo/Redo Routes */
+// @desc Undo/Redo Routes 
 app.use(undoRedoRouter);
-/* Server Listening For Requests */
-app.listen(6000, () => {
-   console.log('Listening for requests');
+
+// @desc Server Listening For Requests 
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+   console.log(`Listening for requests on port ${port}`);
 })

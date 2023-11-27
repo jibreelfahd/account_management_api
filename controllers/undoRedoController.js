@@ -1,6 +1,6 @@
 const { add_user_income } = require('./incomeController');
 const { add_expense } = require('./expenseController');
-const { userIncome, userExpense } = require('../models/userModel');
+const { userIncome, userExpense } = require('../db/models/userIncomeModel');
 
 /* Updating the stack array, redo and undo array */
 const array = [];

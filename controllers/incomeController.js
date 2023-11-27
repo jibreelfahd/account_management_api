@@ -1,36 +1,66 @@
-const { userIncome } = require('../models/userModel')
+const UserIncome = require('../db/models/userIncomeModel');
+const sequelize = require('../db/index');
 
-/* Getting the users income */
-const user_income = (req, res) => {
-   res.json(userIncome);
-}
-
-/* Adding the users income */
-const add_user_income = (req, res) => {
-   const addIncome = req.body.income;
-   userIncome.push(`Income: N${addIncome}`);
-   res.status(201).json({ success: true, data: userIncome});
-}
-
-/* Updating the user income */
-const update_income = (req, res) => {
-   const incomeId = req.params.id;
-   const updateIncome = req.body;
-
-   if (!incomeId) {
-      res.status(400).json( {message: 'No income with this id' });
+// @desc Getting the users income
+const user_income = async (req, res) => {
+   try {
+      const getIncome = await UserIncome.findAll();
+      res.status(200).json({ sucess: true, getIncome });
+   } catch (err) {
+      console.log('Err from get all income', err);
    }
-   userIncome[incomeId] = updateIncome;
-   res.status(200).json(userIncome); 
+}
+
+// @desc Adding the users income
+const add_user_income = async (req, res) => {
+   try {
+      const { income, desc } = req.body;
+      const userIncome = await UserIncome.create({ income, desc });
+      res.status(201).json({ success: true, userIncome});
+   } catch (err) {
+      console.log('Err from create income instance', err);
+   }
+}
+
+// @desc Updating the user income
+const update_income = async (req, res) => {
+   try {
+      const { id } = req.params;
+      const { income, desc } = req.body;
+
+      if (!id) {
+         res.status(400).json( {message: 'No income with this id' });
+      }
+      
+      const updates = await UserIncome.update(
+         { income: income, desc: desc },
+         { where: { id: id }, returning: true },
+      );
+      res.status(201).json({ success: true, updates });
+   } catch (err) {
+      console.log('Err from update income', err);
+   } 
 }
 
 /* Summing all income */
-const add_all_income = (req, res) => {
-   const amount = userIncome.slice(0, 10);
-   const allSum = amount.reduce((acc, prevValue) => {
-      acc + prevValue, 0
-   });
-   res.status(200).res.json({ message: `Total Sum is: N${allSum}` });
+const add_all_income = async (req, res) => {
+   try {
+      if (!UserIncome) {
+         res.status(400).json( {message: 'No income to be added' });
+      }
+      
+      const sumIncome = await UserIncome.findAll({
+         attributes: [
+            'id',
+            [sequelize.fn('sum', sequelize.col('income')), 'totalIncome']
+         ],
+         group: ['id'],
+         raw: true
+      });
+      res.status(201).json({ success: true, sumIncome });
+   } catch (err) {
+      console.log('Err from sum income', err);
+   } 
 }
 
 module.exports = { 

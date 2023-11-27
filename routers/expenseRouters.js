@@ -8,15 +8,15 @@ const { user_expense, add_expense, update_expense, add_all_expenses } = require(
 /* Middleware for checking max capacity */
 
 /* Get all expense route */
-router.get('/expense', user_expense);
+router.get('/', user_expense);
 
 /* Adding more expenses */
-router.post('/expense/add-expense', userAuth , checkMaxExpense ,add_expense);
+router.post('/add-expense', add_expense);
 
 /* Updating an expense */
-router.put('/expense/update-expense/:id', userAuth ,update_expense);
+router.put('/update-expense/:id' ,update_expense);
 
 /* Adding all expenses */
-router.get('/expense/sum', add_all_expenses);
+router.get('/sum', add_all_expenses);
 
 module.exports = router;
